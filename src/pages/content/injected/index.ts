@@ -19,7 +19,7 @@ const handleYoutube = () => {
         const shortsContainer = document.getElementsByTagName('ytd-reel-shelf-renderer');
         shortsContainer.item(0)?.remove();
         if (window.location.href === 'https://www.youtube.com/') {
-          const contents = document.getElementById('contents');
+          const contents = document.getElementById('primary');
           if (contents) {
             contents.hidden = true;
           }
