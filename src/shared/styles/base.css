@@ -1,0 +1,16 @@
+:root {
+  --main-bg-color: rgb(50, 50, 50);
+  --active: rgb(31, 31, 31);
+}
+
+* {
+  box-sizing: border-box; 
+}
+
+body { 
+  background-color: var(--main-bg-color);
+  margin: 2rem;
+}
+
+/* main {
+} */
