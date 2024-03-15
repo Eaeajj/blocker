@@ -9,7 +9,8 @@
  */
 // import('@pages/content/injected/toggleTheme');
 
-const YOUTUBE = 'https://www.youtube.com/';
+const YOUTUBE = 'https://www.youtube.com';
+console.log('\n\n\nLoaded\n\n\n');
 
 const handleYoutube = () => {
   const observer = new MutationObserver(mutations => {
