@@ -40,6 +40,7 @@ const manifest = {
       js: ['src/pages/contentInjected/index.js'],
       // KEY for cache invalidation
       css: ['assets/css/contentStyle<KEY>.chunk.css'],
+      run_at: 'document_start',
     },
   ],
   devtools_page: 'src/pages/devtools/index.html',

@@ -10,30 +10,52 @@
 // import('@pages/content/injected/toggleTheme');
 
 const YOUTUBE = 'https://www.youtube.com';
-console.log('\n\n\nLoaded\n\n\n');
+
+let isShownPageManagerStyles = false;
+const pageManagerStyles = document.createElement('style');
+const setPageManagerVisibility = (show: boolean) => {
+  isShownPageManagerStyles = show;
+  pageManagerStyles.innerHTML = `
+      ytd-page-manager#page-manager {
+        visibility: ${show ? 'visible' : 'hidden'};
+      }
+  `;
+};
+setPageManagerVisibility(false);
+
+const shortsStyles = document.createElement('style');
+shortsStyles.innerHTML = `
+  ytd-rich-section-renderer.style-scope.ytd-rich-grid-renderer {
+    display: none;
+  }
+`;
+
+// Inject styles to documentElement because head is null on document_start execution time
+document.documentElement.appendChild(pageManagerStyles);
+document.documentElement.appendChild(shortsStyles);
 
 const handleYoutube = () => {
   const observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
-        const shortsContainer = document.getElementsByTagName('ytd-reel-shelf-renderer');
-        shortsContainer.item(0)?.remove();
-        if (window.location.href === 'https://www.youtube.com/') {
-          const contents = document.getElementById('primary');
-          if (contents) {
-            contents.hidden = true;
+        if (window.location.href === `${YOUTUBE}/`) {
+          if (isShownPageManagerStyles) {
+            setPageManagerVisibility(false);
           }
+        } else {
+          setPageManagerVisibility(true);
         }
       }
     });
   });
-
   observer.observe(document.body, {
     childList: true,
     subtree: true,
   });
 };
 
-if (window.location.href.startsWith(YOUTUBE)) {
-  handleYoutube();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.href.startsWith(YOUTUBE)) {
+    handleYoutube();
+  }
+});
