@@ -10,6 +10,7 @@
 // import('@pages/content/injected/toggleTheme');
 
 const YOUTUBE = 'https://www.youtube.com';
+const isYoutubeUrl = (url: string) => url === `${YOUTUBE}/`;
 
 let isShownPageManagerStyles = false;
 const pageManagerStyles = document.createElement('style');
@@ -21,7 +22,10 @@ const setPageManagerVisibility = (show: boolean) => {
       }
   `;
 };
-setPageManagerVisibility(false);
+
+if (isYoutubeUrl(window.location.href)) {
+  setPageManagerVisibility(false);
+}
 
 const shortsStyles = document.createElement('style');
 shortsStyles.innerHTML = `
@@ -34,23 +38,31 @@ shortsStyles.innerHTML = `
 document.documentElement.appendChild(pageManagerStyles);
 document.documentElement.appendChild(shortsStyles);
 
+// I can't subscribe to popstate event in the content script
+// contexts of the content scripts are not the same as the contexts of the page
+
+// tracking the URL via MutationObserver leading have disandvatages
+// & flickering when the URL have changed but content of the page have not
+// & it fires too often
+
 const handleYoutube = () => {
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      if (mutation.type === 'childList') {
-        if (window.location.href === `${YOUTUBE}/`) {
-          if (isShownPageManagerStyles) {
-            setPageManagerVisibility(false);
-          }
-        } else {
-          setPageManagerVisibility(true);
+  console.log('\n\nHandle youtube script running...\n\n');
+
+  // now seems like the best solution, but it still flickering...
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'URL_CHANGE') {
+      console.log('\n\nURL_CHANGE\n\n', message.url);
+
+      if (isYoutubeUrl(message.url)) {
+        if (isShownPageManagerStyles) {
+          setPageManagerVisibility(false);
         }
+      } else {
+        setTimeout(() => {
+          setPageManagerVisibility(true);
+        }, 700);
       }
-    });
-  });
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
+    }
   });
 };
 
