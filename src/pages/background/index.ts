@@ -9,11 +9,8 @@ import 'webextension-polyfill';
  */
 // reloadOnUpdate('pages/content/style.scss');
 
-console.log('background loaded');
-
 chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
   // Check if the URL change is relevant to your extension
-  console.log('triggered');
 
   chrome.tabs.sendMessage(details.tabId, {
     type: 'URL_CHANGE',
