@@ -10,7 +10,7 @@
 // import('@pages/content/injected/toggleTheme');
 
 const YOUTUBE = 'https://www.youtube.com';
-const isYoutubeUrl = (url: string) => url === `${YOUTUBE}/`;
+const isYoutubeHomeUrl = (url: string) => url === `${YOUTUBE}/`;
 
 // ============================= dynamic styles ===========================================
 let isShownPageManagerStyles = false;
@@ -18,15 +18,11 @@ const pageManagerStyles = document.createElement('style');
 const setPageManagerVisibility = (show: boolean) => {
   isShownPageManagerStyles = show;
   pageManagerStyles.innerHTML = `
-      ytd-page-manager#page-manager {
+      #page-manager {
         visibility: ${show ? 'visible' : 'hidden'};
       }
   `;
 };
-
-if (isYoutubeUrl(window.location.href)) {
-  setPageManagerVisibility(false);
-}
 
 // ============================= static styles ===========================================
 const shortsStyles = document.createElement('style');
@@ -55,7 +51,7 @@ endVideoVideoWallRecommendations.innerHTML = `
   display: none;
 }
 `;
-// =======================================================================================
+// ==================================== Injection ========================================
 
 // Inject styles to documentElement because head is null on document_start execution time
 document.documentElement.appendChild(pageManagerStyles);
@@ -64,6 +60,7 @@ document.documentElement.appendChild(rightSideRecommendationsColumnWhileWatching
 document.documentElement.appendChild(nextVideoRecommendationOverVideoInTheEnd);
 document.documentElement.appendChild(endVideoVideoWallRecommendations);
 
+// ============================= handling dynamic styles ==================================
 // I can't subscribe to popstate event in the content script
 // contexts of the content scripts are not the same as the contexts of the page
 
@@ -72,16 +69,22 @@ document.documentElement.appendChild(endVideoVideoWallRecommendations);
 // & it fires too often
 
 const handleYoutube = () => {
-  console.log('\n\nHandle youtube script running...\n\n');
+  setPageManagerVisibility(!isYoutubeHomeUrl(window.location.href));
 
-  // now seems like the best solution, but it still flickering...
+  // now seems like the best solution, but it rarely still flickering...
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'URL_CHANGE') {
+      if (window.location.href !== message.url) {
+        return;
+        // when redirecting from '/channel' to '/'
+        // there first event coming is redirect to '/channel' and the second is '/'
+      }
       console.log('\n\nURL_CHANGE\n\n', message.url);
 
-      if (isYoutubeUrl(message.url)) {
+      if (isYoutubeHomeUrl(message.url)) {
         if (isShownPageManagerStyles) {
           setPageManagerVisibility(false);
+          console.log('\n\n\nAllo privet!\n\n');
         }
       } else {
         setTimeout(() => {
