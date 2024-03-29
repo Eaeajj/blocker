@@ -12,6 +12,7 @@
 const YOUTUBE = 'https://www.youtube.com';
 const isYoutubeUrl = (url: string) => url === `${YOUTUBE}/`;
 
+// ============================= dynamic styles ===========================================
 let isShownPageManagerStyles = false;
 const pageManagerStyles = document.createElement('style');
 const setPageManagerVisibility = (show: boolean) => {
@@ -27,6 +28,7 @@ if (isYoutubeUrl(window.location.href)) {
   setPageManagerVisibility(false);
 }
 
+// ============================= static styles ===========================================
 const shortsStyles = document.createElement('style');
 shortsStyles.innerHTML = `
   ytd-rich-section-renderer.style-scope.ytd-rich-grid-renderer {
@@ -34,9 +36,33 @@ shortsStyles.innerHTML = `
   }
 `;
 
+const rightSideRecommendationsColumnWhileWatching = document.createElement('style');
+rightSideRecommendationsColumnWhileWatching.innerHTML = `
+  #secondary {
+    display: none;
+  }
+`;
+
+const nextVideoRecommendationOverVideoInTheEnd = document.createElement('style');
+nextVideoRecommendationOverVideoInTheEnd.innerHTML = `
+  #movie_player > div.ytp-ce-element.ytp-ce-video.ytp-ce-large-round.ytp-ce-bottom-left-quad.ytp-ce-size-1280.ytp-ce-element-show {
+    display: none;
+  }
+`;
+const endVideoVideoWallRecommendations = document.createElement('style');
+endVideoVideoWallRecommendations.innerHTML = `
+#movie_player > div.html5-endscreen.ytp-player-content.videowall-endscreen.ytp-show-tiles {
+  display: none;
+}
+`;
+// =======================================================================================
+
 // Inject styles to documentElement because head is null on document_start execution time
 document.documentElement.appendChild(pageManagerStyles);
 document.documentElement.appendChild(shortsStyles);
+document.documentElement.appendChild(rightSideRecommendationsColumnWhileWatching);
+document.documentElement.appendChild(nextVideoRecommendationOverVideoInTheEnd);
+document.documentElement.appendChild(endVideoVideoWallRecommendations);
 
 // I can't subscribe to popstate event in the content script
 // contexts of the content scripts are not the same as the contexts of the page
