@@ -40,14 +40,22 @@ rightSideRecommendationsColumnWhileWatching.innerHTML = `
 `;
 
 const nextVideoRecommendationOverVideoInTheEnd = document.createElement('style');
+//  TODO: generalize later
 nextVideoRecommendationOverVideoInTheEnd.innerHTML = `
-  #movie_player > div.ytp-ce-element.ytp-ce-video.ytp-ce-large-round.ytp-ce-bottom-left-quad.ytp-ce-size-1280.ytp-ce-element-show {
+  #movie_player > div.ytp-ce-element.ytp-ce-video {
     display: none;
   }
 `;
+
 const endVideoVideoWallRecommendations = document.createElement('style');
 endVideoVideoWallRecommendations.innerHTML = `
 #movie_player > div.html5-endscreen.ytp-player-content.videowall-endscreen.ytp-show-tiles {
+  display: none;
+}
+`;
+const watchedShortsInHistory = document.createElement('style');
+watchedShortsInHistory.innerHTML = `
+#contents > ytd-reel-shelf-renderer {
   display: none;
 }
 `;
@@ -59,7 +67,7 @@ document.documentElement.appendChild(shortsStyles);
 document.documentElement.appendChild(rightSideRecommendationsColumnWhileWatching);
 document.documentElement.appendChild(nextVideoRecommendationOverVideoInTheEnd);
 document.documentElement.appendChild(endVideoVideoWallRecommendations);
-
+document.documentElement.appendChild(watchedShortsInHistory);
 // ============================= handling dynamic styles ==================================
 // I can't subscribe to popstate event in the content script
 // contexts of the content scripts are not the same as the contexts of the page
